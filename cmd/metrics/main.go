@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"log"
+	"math"
 	"net/http"
 	"strconv"
 	"time"
@@ -15,9 +16,8 @@ import (
 
 var (
 	hetznerServersHistogram = prometheus.NewHistogramVec(prometheus.HistogramOpts{
-		Name:    "hetzner_robot_servers_price",
-		Help:    "Hetzner Robot Server",
-		Buckets: prometheus.LinearBuckets(10, 5, 100),
+		Name: "hetzner_robot_servers_price",
+		Help: "Hetzner Robot Server",
 	}, []string{"key"})
 )
 
@@ -40,6 +40,7 @@ func main() {
 					log.Printf("could not parse price: %v", err)
 					continue
 				}
+				price = math.Round(price * 1.19)
 				hetznerServersHistogram.WithLabelValues(strconv.Itoa(server.Key)).Observe(price)
 			}
 			// Sleep 30 minutes
