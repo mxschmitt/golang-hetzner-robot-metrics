@@ -15,14 +15,14 @@ import (
 )
 
 var (
-	hetznerServersCounter = prometheus.NewCounterVec(prometheus.CounterOpts{
+	hetznerServersGauge = prometheus.NewGaugeVec(prometheus.GaugeOpts{
 		Name: "hetzner_robot_servers_price",
 		Help: "Hetzner Robot Server",
 	}, []string{"key"})
 )
 
 func init() {
-	prometheus.MustRegister(hetznerServersCounter)
+	prometheus.MustRegister(hetznerServersGauge)
 }
 
 func main() {
@@ -41,7 +41,7 @@ func main() {
 					continue
 				}
 				price = math.Round(price * 1.19)
-				hetznerServersCounter.WithLabelValues(strconv.Itoa(server.Key)).Add(price)
+				hetznerServersGauge.WithLabelValues(strconv.Itoa(server.Key)).Set(price)
 			}
 			log.Printf("Crawled %d servers with hash %s", len(api.Server), api.Hash)
 			// Sleep 10 minutes
