@@ -42,7 +42,8 @@ func main() {
 				}
 				hetznerServersHistogram.WithLabelValues(strconv.Itoa(server.Key)).Observe(price)
 			}
-			time.Sleep(5 * time.Second)
+			// Sleep 30 minutes
+			time.Sleep(30 * 60 * time.Second)
 		}
 	}()
 	log.Printf("Listening on %s", *addr)

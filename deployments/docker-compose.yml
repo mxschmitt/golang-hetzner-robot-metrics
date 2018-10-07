@@ -1,0 +1,19 @@
+version: '3'
+services:
+  metrics:
+    build:
+      context: ..
+      dockerfile: build/Dockerfile
+  grafana:
+    image: grafana/grafana
+    ports:
+     - "3000:3000"
+    depends_on:
+      - prometheus
+  prometheus:
+    image: prom/prometheus
+    volumes:
+     - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    command: "--config.file=/etc/prometheus/prometheus.yml"
+    depends_on:
+     - metrics
