@@ -15,14 +15,14 @@ import (
 )
 
 var (
-	hetznerServersHistogram = prometheus.NewHistogramVec(prometheus.HistogramOpts{
+	hetznerServersCounter = prometheus.NewCounterVec(prometheus.CounterOpts{
 		Name: "hetzner_robot_servers_price",
 		Help: "Hetzner Robot Server",
 	}, []string{"key"})
 )
 
 func init() {
-	prometheus.MustRegister(hetznerServersHistogram)
+	prometheus.MustRegister(hetznerServersCounter)
 }
 
 func main() {
@@ -41,7 +41,7 @@ func main() {
 					continue
 				}
 				price = math.Round(price * 1.19)
-				hetznerServersHistogram.WithLabelValues(strconv.Itoa(server.Key)).Observe(price)
+				hetznerServersCounter.WithLabelValues(strconv.Itoa(server.Key)).Add(price)
 			}
 			log.Printf("Crawled %d servers with hash %s", len(api.Server), api.Hash)
 			// Sleep 10 minutes
