@@ -140,8 +140,8 @@
       ]
     },
     "time": {
-      "from": "2018-10-03T12:39:33.120Z",
-      "to": "2018-11-03T16:09:41.650Z"
+      "from": "now-24h",
+      "to": "now"
     },
     "timepicker": {
       "refresh_intervals": [

@@ -43,8 +43,9 @@ func main() {
 				price = math.Round(price * 1.19)
 				hetznerServersHistogram.WithLabelValues(strconv.Itoa(server.Key)).Observe(price)
 			}
-			// Sleep 30 minutes
-			time.Sleep(30 * 60 * time.Second)
+			log.Printf("Crawled %d servers with hash %s", len(api.Server), api.Hash)
+			// Sleep 10 minutes
+			time.Sleep(10 * 60 * time.Second)
 		}
 	}()
 	log.Printf("Listening on %s", *addr)
