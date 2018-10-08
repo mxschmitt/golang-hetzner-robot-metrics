@@ -16,9 +16,103 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 1,
-  "iteration": 1538939378866,
+  "iteration": 1539004284574,
   "links": [],
   "panels": [
+    {
+      "content": "<div id=\"hetzner-server-info\"></div>\r\n<script>\r\n    fetch(\"/hetzner/server/$key\")\r\n        .then(resp => resp.ok ? resp.json() : resp.text())\r\n        .then(data => {\r\n            console.log(data)\r\n            let root = document.getElementById(\"hetzner-server-info\")\r\n            root.innerHTML = `\r\n        <h3>${data.cpu} (CPU-B ${data.cpu_benchmark})</h3>\r\n        <ul>\r\n          <li>HDD: ${data.hdd_hr} ${data.specialHdd ? \"(\" + data.specialHdd + \")\" : \"\"}</li>\r\n          <li>RAM: ${data.ram_hr}</li>\r\n          <li>Datacenter: ${data.datacenter[0]} (${data.datacenter[1]})</li>\r\n          <li>Traffic: ${data.traffic}</li>\r\n          ${data.specials.length > 0 ? \"<li>Specials: \" + data.specials.join(\", \") + \"</li>\" : \"\"}\r\n          <li>Next Reduce: ${data.next_reduce_hr}</li>\r\n          <li>Price: ${Math.round(data.price * 1.19)} €</li>\r\n        </ul>\r\n        <p>${data.description.join(\"<br>\")}</p>\r\n      `\r\n        })\r\n</script>",
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 0
+      },
+      "id": 8,
+      "links": [],
+      "mode": "html",
+      "title": "Server Information",
+      "type": "text"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": false,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "datasource": "Prometheus",
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 2,
+        "x": 8,
+        "y": 0
+      },
+      "id": 4,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "expr": "count(hetzner_robot_servers_price)",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "refId": "A"
+        }
+      ],
+      "thresholds": "",
+      "title": "Available Servers",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "avg"
+    },
     {
       "aliasColors": {},
       "bars": false,
@@ -27,9 +121,9 @@
       "datasource": "Prometheus",
       "fill": 1,
       "gridPos": {
-        "h": 9,
-        "w": 13,
-        "x": 0,
+        "h": 8,
+        "w": 14,
+        "x": 10,
         "y": 0
       },
       "id": 6,
@@ -104,86 +198,6 @@
       }
     },
     {
-      "cacheTimeout": null,
-      "colorBackground": false,
-      "colorValue": false,
-      "colors": [
-        "#299c46",
-        "rgba(237, 129, 40, 0.89)",
-        "#d44a3a"
-      ],
-      "datasource": "Prometheus",
-      "format": "none",
-      "gauge": {
-        "maxValue": 100,
-        "minValue": 0,
-        "show": false,
-        "thresholdLabels": false,
-        "thresholdMarkers": true
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 11,
-        "x": 13,
-        "y": 0
-      },
-      "id": 4,
-      "interval": null,
-      "links": [],
-      "mappingType": 1,
-      "mappingTypes": [
-        {
-          "name": "value to text",
-          "value": 1
-        },
-        {
-          "name": "range to text",
-          "value": 2
-        }
-      ],
-      "maxDataPoints": 100,
-      "nullPointMode": "connected",
-      "nullText": null,
-      "postfix": "",
-      "postfixFontSize": "50%",
-      "prefix": "",
-      "prefixFontSize": "50%",
-      "rangeMaps": [
-        {
-          "from": "null",
-          "text": "N/A",
-          "to": "null"
-        }
-      ],
-      "sparkline": {
-        "fillColor": "rgba(31, 118, 189, 0.18)",
-        "full": false,
-        "lineColor": "rgb(31, 120, 193)",
-        "show": false
-      },
-      "tableColumn": "",
-      "targets": [
-        {
-          "expr": "count(hetzner_robot_servers_price)",
-          "format": "time_series",
-          "intervalFactor": 1,
-          "refId": "A"
-        }
-      ],
-      "thresholds": "",
-      "title": "Available Servers",
-      "type": "singlestat",
-      "valueFontSize": "80%",
-      "valueMaps": [
-        {
-          "op": "=",
-          "text": "N/A",
-          "value": "null"
-        }
-      ],
-      "valueName": "avg"
-    },
-    {
       "aliasColors": {},
       "bars": false,
       "dashLength": 10,
@@ -192,10 +206,10 @@
       "description": "Price trend of the selected Hetzner Robot Server",
       "fill": 1,
       "gridPos": {
-        "h": 20,
+        "h": 12,
         "w": 24,
         "x": 0,
-        "y": 9
+        "y": 8
       },
       "id": 2,
       "legend": {
@@ -287,7 +301,7 @@
         "datasource": "Prometheus",
         "hide": 0,
         "includeAll": false,
-        "label": "Server Key",
+        "label": "Server ID",
         "multi": false,
         "name": "key",
         "options": [],
@@ -335,5 +349,5 @@
   "timezone": "",
   "title": "Hetzner Robot Stats",
   "uid": "QWw7Ad1iz",
-  "version": 6
+  "version": 25
 }
