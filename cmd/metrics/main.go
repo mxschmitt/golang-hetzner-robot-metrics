@@ -26,11 +26,16 @@ type Store struct {
 
 func handleGetServer(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	store.RLock()
+	found := false
 	for _, server := range store.Data.Server {
 		if strconv.Itoa(server.Key) == ps.ByName("id") {
 			json.NewEncoder(w).Encode(server)
+			found = true
 			break
 		}
+	}
+	if !found {
+		json.NewEncoder(w).Encode(nil)
 	}
 	store.RUnlock()
 }
