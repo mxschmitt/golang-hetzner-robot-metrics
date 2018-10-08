@@ -15,9 +15,11 @@ services:
   prometheus:
     image: prom/prometheus
     volumes:
+     - prometheus-storage:/prometheus
      - ./prometheus.yml:/etc/prometheus/prometheus.yml
     command: "--config.file=/etc/prometheus/prometheus.yml"
     depends_on:
      - metrics
 volumes:
   grafana-storage:
+  prometheus-storage:
