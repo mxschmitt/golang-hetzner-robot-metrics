@@ -7,9 +7,13 @@ services:
   grafana:
     image: grafana/grafana
     ports:
-     - "3000:3000"
+     - "127.0.0.1:3000:3000"
     volumes:
      - grafana-storage:/var/lib/grafana
+    environment:
+     - GF_SERVER_ROOT_URL=https://hetzner.schmitt.mx
+     - GF_AUTH_ANONYMOUS_ENABLED=true
+     - GF_AUTH_ANONYMOUS_ORG_NAME=Public
     depends_on:
       - prometheus
   prometheus:
