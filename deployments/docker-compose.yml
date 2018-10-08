@@ -4,6 +4,8 @@ services:
     build:
       context: ..
       dockerfile: build/Dockerfile
+    ports:
+     - "127.0.0.1:3001:8080"
   grafana:
     image: grafana/grafana
     ports:
