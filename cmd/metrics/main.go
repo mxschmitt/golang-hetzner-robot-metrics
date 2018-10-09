@@ -27,11 +27,13 @@ type Store struct {
 func handleGetServer(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	store.RLock()
 	found := false
-	for _, server := range store.Data.Server {
-		if strconv.Itoa(server.Key) == ps.ByName("id") {
-			json.NewEncoder(w).Encode(server)
-			found = true
-			break
+	if store.Data != nil {
+		for _, server := range store.Data.Server {
+			if strconv.Itoa(server.Key) == ps.ByName("id") {
+				json.NewEncoder(w).Encode(server)
+				found = true
+				break
+			}
 		}
 	}
 	if !found {
@@ -45,9 +47,9 @@ func main() {
 	flag.Parse()
 
 	hetznerServersGauge := prometheus.NewGaugeVec(prometheus.GaugeOpts{
-                Name: "hetzner_robot_servers_price",
-                Help: "Hetzner Robot Server",
-        }, []string{"key"})
+		Name: "hetzner_robot_servers_price",
+		Help: "Hetzner Robot Server",
+	}, []string{"key"})
 	prometheus.MustRegister(hetznerServersGauge)
 
 	go func() {
@@ -69,8 +71,8 @@ func main() {
 				hetznerServersGauge.WithLabelValues(strconv.Itoa(server.Key)).Set(price)
 			}
 			log.Printf("Crawled %d servers with hash %s", len(data.Server), data.Hash)
-			// Sleep 10 minutes
-			time.Sleep(10 * 60 * time.Second)
+			// Sleep 1 minute
+			time.Sleep(60 * time.Second)
 		}
 	}()
 	log.Printf("Listening on %s", *addr)
