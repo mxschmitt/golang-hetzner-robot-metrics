@@ -16,11 +16,11 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 1,
-  "iteration": 1539004284574,
+  "iteration": 1539345498959,
   "links": [],
   "panels": [
     {
-      "content": "<div id=\"hetzner-server-info\"></div>\r\n<script>\r\n    fetch(\"/hetzner/server/$key\")\r\n        .then(resp => resp.ok ? resp.json() : resp.text())\r\n        .then(data => {\r\n            console.log(data)\r\n            let root = document.getElementById(\"hetzner-server-info\")\r\n            root.innerHTML = `\r\n        <h3>${data.cpu} (CPU-B ${data.cpu_benchmark})</h3>\r\n        <ul>\r\n          <li>HDD: ${data.hdd_hr} ${data.specialHdd ? \"(\" + data.specialHdd + \")\" : \"\"}</li>\r\n          <li>RAM: ${data.ram_hr}</li>\r\n          <li>Datacenter: ${data.datacenter[0]} (${data.datacenter[1]})</li>\r\n          <li>Traffic: ${data.traffic}</li>\r\n          ${data.specials.length > 0 ? \"<li>Specials: \" + data.specials.join(\", \") + \"</li>\" : \"\"}\r\n          <li>Next Reduce: ${data.next_reduce_hr}</li>\r\n          <li>Price: ${Math.round(data.price * 1.19)} €</li>\r\n        </ul>\r\n        <p>${data.description.join(\"<br>\")}</p>\r\n      `\r\n        })\r\n</script>",
+      "content": "<div id=\"hetzner-server-info\"></div>\r\n<script>\r\n    fetch(\"/hetzner/server/$key\")\r\n        .then(resp => resp.ok ? resp.json() : resp.text())\r\n        .then(data => {\r\n            let root = document.getElementById(\"hetzner-server-info\")\r\n            if (!data) {\r\n                root.innerHTML = `<h3>Not available anymore</h3>`\r\n                return\r\n            }\r\n            root.innerHTML = `\r\n        <h3>${data.cpu} (CPU-B ${data.cpu_benchmark})</h3>\r\n        <ul>\r\n          <li>HDD: ${data.hdd_hr} ${data.specialHdd ? \"(\" + data.specialHdd + \")\" : \"\"}</li>\r\n          <li>RAM: ${data.ram_hr}</li>\r\n          <li>Datacenter: ${data.datacenter[0]} (${data.datacenter[1]})</li>\r\n          <li>Traffic: ${data.traffic}</li>\r\n          ${data.specials.length > 0 ? \"<li>Specials: \" + data.specials.join(\", \") + \"</li>\" : \"\"}\r\n          <li>Next Reduce: ${data.next_reduce_hr}</li>\r\n          <li>Price: ${Math.round(data.price * 1.19)} €</li>\r\n          <li>Server ID: ${key}</li>\r\n        </ul>\r\n        <p style=\"margin-bottom: 0\">${data.description.join(\"<br>\")}</p>\r\n        <a id=\"hetzner-go-to-robot\" target=\"_blank\" style=\"position: absolute; top: 0; right: 10px\" title=\"Hetzner Robot\">\r\n          <button class=\"btn navbar-button\">\r\n          \t\t<i class=\"gicon gicon-link\"></i>\r\n          </button>\r\n        </a>\r\n      `})\r\n        .then(_ => {\r\n            let copyToClipboard = str => {\r\n                const el = document.createElement('textarea')\r\n                el.value = str\r\n                el.setAttribute('readonly', '')\r\n                el.style.position = 'absolute'\r\n                el.style.left = '-9999px'\r\n                document.body.appendChild(el)\r\n                el.select()\r\n                document.execCommand('copy')\r\n                document.body.removeChild(el)\r\n            }\r\n            let el = document.getElementById(\"hetzner-go-to-robot\")\r\n            if (el) {\r\n                el.addEventListener(\"click\", () => {\r\n                    copyToClipboard(\"$key\")\r\n                    let el = document.createElement(\"div\")\r\n                    el.classList = \"alert-success alert\"\r\n                    el.innerHTML = `\r\n                    <div class=\"alert-icon\">\r\n                        <i class=\"fa fa-check\"></i>\r\n                    </div>\r\n                    <div class=\"alert-body\">\r\n                        <div class=\"alert-title\">Content Server ID to clipboard</div>\r\n                        <div class=\"alert-text\"></div>\r\n                    </div>\r\n                    <button type=\"button\" class=\"alert-close\">\r\n                        <i class=\"fa fa fa-remove\"></i>\r\n                    </button>\r\n                    `\r\n                    document.querySelector(\".page-alert-list\").append(el)\r\n                    window.setTimeout(()=> {\r\n                      el.remove()\r\n                      window.open(\"https://hetzner.de/sb\")  \r\n                    }, 1000)\r\n                    \r\n                })\r\n            }\r\n        })\r\n</script>",
       "gridPos": {
         "h": 8,
         "w": 8,
@@ -305,8 +305,8 @@
         "multi": false,
         "name": "key",
         "options": [],
-        "query": "label_values(key)",
-        "refresh": 1,
+        "query": "label_values(hetzner_robot_servers_price, key)",
+        "refresh": 2,
         "regex": "",
         "sort": 0,
         "tagValuesQuery": "",
@@ -349,5 +349,5 @@
   "timezone": "",
   "title": "Hetzner Robot Stats",
   "uid": "QWw7Ad1iz",
-  "version": 25
+  "version": 49
 }
