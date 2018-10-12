@@ -1,6 +1,8 @@
 # Hetzner Robot Price Statistics
 
-Price statistics and alerting of the [Hetzner Robot](https://hetzner.de/sb) analyzed via Prometheus and Grafana. 
+Price statistics and alerting of the [Hetzner Robot](https://hetzner.de/sb) analyzed via Prometheus and Grafana.
+
+![Grafana Dashboard](./docs/grafana_dashboard.png)
 
 ## Getting Started
 
@@ -19,9 +21,9 @@ The following TODOs have to be done after the deployment:
 
 ## Built With
 
-* [Grafana](https://grafana.com/) - Analysis Webinterface
-* [Prometheus](https://prometheus.io) - Metric Storage
-* [Golang](https://golang.org/) - Programming language which provides the data
+- [Grafana](https://grafana.com/) - Analysis Webinterface
+- [Prometheus](https://prometheus.io) - Metric Storage
+- [Golang](https://golang.org/) - Programming language which provides the data
 
 ## License
 
