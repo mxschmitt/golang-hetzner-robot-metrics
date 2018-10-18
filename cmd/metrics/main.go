@@ -1,8 +1,10 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"flag"
+	"fmt"
 	"log"
 	"math"
 	"net/http"
@@ -10,9 +12,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/mxschmitt/golang-hetzner-robot-metrics/pkg/api"
+	"github.com/pkg/errors"
+	"github.com/prometheus/client_golang/api"
+
+	hetznerapi "github.com/mxschmitt/golang-hetzner-robot-metrics/pkg/api"
 
 	"github.com/julienschmidt/httprouter"
+	"github.com/prometheus/client_golang/api/prometheus/v1"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
@@ -20,7 +26,7 @@ import (
 var store = &Store{}
 
 type Store struct {
-	Data *api.LiveData
+	Data *hetznerapi.LiveData
 	sync.RWMutex
 }
 
@@ -52,9 +58,47 @@ func main() {
 	}, []string{"key"})
 	prometheus.MustRegister(hetznerServersGauge)
 
+	removeOldServers := func(data *hetznerapi.LiveData) error {
+		client, err := api.NewClient(api.Config{
+			Address: "http://prometheus:9090",
+		})
+		if err != nil {
+			return errors.Wrap(err, "could not create new prometheus api client")
+		}
+		prometheusAPI := v1.NewAPI(client)
+		resp, err := prometheusAPI.LabelValues(context.Background(), "key")
+		if err != nil {
+			return errors.Wrap(err, "could not query to prometheus")
+		}
+		soldServersMatches := []string{}
+		for _, label := range resp {
+			contains := false
+			for _, server := range data.Server {
+				if strconv.Itoa(server.Key) == string(label) {
+					contains = true
+				}
+			}
+			if !contains {
+				soldServersMatches = append(soldServersMatches, fmt.Sprintf(`hetzner_robot_servers_price{key="%s"}`, label))
+			}
+		}
+		if len(soldServersMatches) > 0 {
+			fmt.Printf("Deleting sold servers: %d\n", len(soldServersMatches))
+			if err := prometheusAPI.DeleteSeries(context.Background(), soldServersMatches, time.Unix(0, 0), time.Now()); err != nil {
+				return errors.Wrap(err, "could not delete sold servers")
+			}
+			fmt.Println("Deleted sold servers successfully")
+			if err := prometheusAPI.CleanTombstones(context.Background()); err != nil {
+				return errors.Wrap(err, "could not clear Tombstones")
+			}
+			fmt.Println("Cleaned Tombstones")
+		}
+		return nil
+	}
+
 	go func() {
 		for {
-			data, err := api.GetLiveData()
+			data, err := hetznerapi.GetLiveData()
 			if err != nil {
 				log.Printf("could not get live data: %v", err)
 				continue
@@ -70,6 +114,9 @@ func main() {
 				}
 				price = math.Round(price * 1.19)
 				hetznerServersGauge.WithLabelValues(strconv.Itoa(server.Key)).Set(price)
+			}
+			if err := removeOldServers(data); err != nil {
+				log.Printf("could not remove old servers: %v", err)
 			}
 			log.Printf("Crawled %d servers with hash %s", len(data.Server), data.Hash)
 			// Sleep 1 minute
