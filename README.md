@@ -21,9 +21,9 @@ The following TODOs have to be done after the deployment:
 
 ## Built With
 
-- [Grafana](https://grafana.com/) - Analysis Webinterface
+- [Grafana](https://grafana.com) - Analysis Webinterface
 - [Prometheus](https://prometheus.io) - Metric Storage
-- [Golang](https://golang.org/) - Programming language which provides the data
+- [Golang](https://golang.org) - Programming language in which the metrics daemon was written in
 
 ## License
 
