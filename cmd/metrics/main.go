@@ -57,6 +57,7 @@ func main() {
 			data, err := api.GetLiveData()
 			if err != nil {
 				log.Printf("could not get live data: %v", err)
+				continue
 			}
 			store.Lock()
 			store.Data = data
