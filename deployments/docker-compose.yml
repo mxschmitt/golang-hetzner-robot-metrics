@@ -4,6 +4,12 @@ services:
     build:
       context: ..
       dockerfile: build/Dockerfile
+    depends_on:
+     - prometheus
+    networks:
+      main:
+        aliases:
+          - metrics
   grafana:
     image: grafana/grafana
     volumes:
@@ -14,14 +20,20 @@ services:
      - GF_AUTH_ANONYMOUS_ORG_NAME=Public
     depends_on:
       - prometheus
+    networks:
+      main:
+    ports:
+      - "127.0.0.1:3000:3000"
   prometheus:
     image: prom/prometheus
     volumes:
      - prometheus-storage:/prometheus
      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-    command: "--config.file=/etc/prometheus/prometheus.yml"
-    depends_on:
-     - metrics
+    command: "--config.file=/etc/prometheus/prometheus.yml --web.enable-admin-api"
+    networks:
+      main:
+        aliases:
+          - prometheus
   nginx: 
     image: nginx
     volumes:
@@ -30,6 +42,10 @@ services:
       - "127.0.0.1:8080:8080"
     depends_on:
       - grafana
+    networks:
+      main:
 volumes:
   grafana-storage:
   prometheus-storage:
+networks:
+  main:
