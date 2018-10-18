@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 1,
-  "iteration": 1539345498959,
+  "iteration": 1539889806453,
   "links": [],
   "panels": [
     {
@@ -96,6 +96,7 @@
         {
           "expr": "count(hetzner_robot_servers_price)",
           "format": "time_series",
+          "instant": true,
           "intervalFactor": 1,
           "refId": "A"
         }
@@ -306,7 +307,7 @@
         "name": "key",
         "options": [],
         "query": "label_values(hetzner_robot_servers_price, key)",
-        "refresh": 2,
+        "refresh": 1,
         "regex": "",
         "sort": 0,
         "tagValuesQuery": "",
@@ -349,5 +350,5 @@
   "timezone": "",
   "title": "Hetzner Robot Stats",
   "uid": "QWw7Ad1iz",
-  "version": 49
+  "version": 52
 }
